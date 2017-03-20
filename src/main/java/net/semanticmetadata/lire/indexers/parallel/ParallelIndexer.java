@@ -49,6 +49,7 @@ import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
 import net.semanticmetadata.lire.imageanalysis.features.global.JCD;
 import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.utils.FileUtils;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -346,6 +347,24 @@ public class ParallelIndexer implements Runnable {
     }
 
     /**
+     * Constructor for use with hashing.
+     *
+     * @param numOfThreads number of threads used for processing.
+     * @param indexPath    the directory the index witll be written to.
+     * @param imageDirectory    the directory where images can be found.
+     * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
+     */
+    public ParallelIndexer(int numOfThreads, String indexPath, String imageDirectory, GlobalDocumentBuilder.HashingMode hashingMode) {
+        this.numOfThreads = numOfThreads;
+        this.indexPath = indexPath;
+        this.imageDirectory = imageDirectory;
+        if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
+            this.globalHashing = true;
+        } else this.globalHashing = false;
+        this.globalHashingMode = hashingMode;
+    }
+
+    /**
      * Constructor for use with hashing and optional storage in DocValues instead of Lucene fields.
      *
      * @param numOfThreads number of threads used for processing.
@@ -358,6 +377,28 @@ public class ParallelIndexer implements Runnable {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageList = imageList;
+        if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
+            this.globalHashing = true;
+        } else {
+            this.globalHashing = false;
+        }
+        this.globalHashingMode = hashingMode;
+        this.useDocValues = useDocValues;
+    }
+
+    /**
+     * Constructor for use with hashing and optional storage in DocValues instead of Lucene fields.
+     *
+     * @param numOfThreads number of threads used for processing.
+     * @param indexPath    the directory the index witll be written to.
+     * @param imageDirectory    the directory where the images are to be found.
+     * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
+     * @param useDocValues set to true if you want to use DocValues instead of Fields.
+     */
+    public ParallelIndexer(int numOfThreads, String indexPath, String imageDirectory, GlobalDocumentBuilder.HashingMode hashingMode, boolean useDocValues) {
+        this.numOfThreads = numOfThreads;
+        this.indexPath = indexPath;
+        this.imageDirectory = imageDirectory;
         if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
             this.globalHashing = true;
         } else {
@@ -1067,6 +1108,8 @@ public class ParallelIndexer implements Runnable {
                     }
                 } catch (InterruptedException | IOException e) {
                     log.severe(e.getMessage());
+                }  catch (Exception e) {
+                    log.severe(e.getMessage());
                 }
             }
         }
@@ -1110,6 +1153,8 @@ public class ParallelIndexer implements Runnable {
                     }
                 } catch (InterruptedException e) {
                     log.severe(e.getMessage());
+                }  catch (Exception e) {
+                    log.severe(e.getMessage());
                 }
             }
         }
@@ -1148,6 +1193,8 @@ public class ParallelIndexer implements Runnable {
                         }
                     }
                 } catch (InterruptedException | IOException e) {
+                    log.severe(e.getMessage());
+                } catch (Exception e) {
                     log.severe(e.getMessage());
                 }
             }
@@ -1188,7 +1235,7 @@ public class ParallelIndexer implements Runnable {
         }
 
         public void run() {
-            WorkItem tmp;
+            WorkItem tmp = null;
             Document doc;
             Field[] fields;
             BufferedImage image;
@@ -1203,6 +1250,7 @@ public class ParallelIndexer implements Runnable {
                     else overallCount++;
                     if (!locallyEnded) {    //&& tmp != null
                         image = ImageIO.read(new ByteArrayInputStream(tmp.getBuffer()));
+//                        image = ImageUtils.createWorkingCopy(ImageIO.read(new ByteArrayInputStream(tmp.getBuffer())));
                         if(imagePreprocessor != null){
                             image = imagePreprocessor.process(image);
                         }
@@ -1222,9 +1270,9 @@ public class ParallelIndexer implements Runnable {
                         writer.addDocument(doc);
                     }
                 } catch (InterruptedException | IOException e) {
-                    log.severe(e.getMessage());
+                    log.severe(e.getMessage() + ": " + tmp!=null?tmp.getFileName():"");
                 } catch (Exception e) {
-                    log.severe(e.getMessage());
+                    log.severe(e.getMessage() + ": " + tmp!=null?tmp.getFileName():"");
                 }
             }
         }
