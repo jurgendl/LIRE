@@ -62,7 +62,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
+		<targetJdk.short>8</targetJdk.short>
+        <targetJdk>1.${targetJdk.short}</targetJdk>
+        <maven.compiler.source>1.${targetJdk.short}</maven.compiler.source>
+        <maven.compiler.target>1.${targetJdk.short}</maven.compiler.target>
+        <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+        <forceRecheck>false</forceRecheck>
+		<scope.activation>provided</scope.activation>
 
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
@@ -140,15 +146,23 @@
 	<build>
 		<finalName>lire</finalName>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+					<!--<release>${targetJdk.short}</release>-->
+                    <fork>false</fork>
+                    <source>${targetJdk}</source>
+                    <target>${targetJdk}</target>
+                    <optimize>true</optimize>
+                    <verbose>false</verbose>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <debug>true</debug>
+                    <debuglevel>lines,vars,source</debuglevel>
+                    <compilerArgument>-parameters</compilerArgument>
+                </configuration>
+            </plugin>
 
 			<!-- Generate the project-javadoc.jar for OSS repository -->
 			<plugin>
@@ -164,17 +178,28 @@
 				<version>${maven-source-plugin.version}</version>
 			</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven-surefire-plugin.version}</version>
-				<configuration>
-					<forkMode>once</forkMode>
-					<argLine>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M3</version><!--$NO-MVN-MAN-VER$ -->
+                <configuration>
+                    <testFailureIgnore>false</testFailureIgnore>
+                    <forkMode>pertest</forkMode>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+					<!-- <argLine>
 						-Djava.library.path=${project.basedir}/libs/native/linux:${project.basedir}/libs/native/osx:${project.basedir}/libs/native/win:${java.library.path}
+					</argLine> -->
+					<argLine>
+						-Djava.library.path=${project.basedir}/lib:${project.basedir}/lib/opencv
 					</argLine>
-				</configuration>
-			</plugin>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
 		</plugins>
 	</build>
 
