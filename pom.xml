@@ -183,21 +183,19 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M3</version><!--$NO-MVN-MAN-VER$ -->
                 <configuration>
-                    <testFailureIgnore>false</testFailureIgnore>
-                    <forkMode>pertest</forkMode>
-                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <forkMode>once</forkMode>
 					<!-- <argLine>
 						-Djava.library.path=${project.basedir}/libs/native/linux:${project.basedir}/libs/native/osx:${project.basedir}/libs/native/win:${java.library.path}
 					</argLine> -->
 					<argLine>
-						-Djava.library.path=${project.basedir}/lib:${project.basedir}/lib/opencv
+						-Djava.library.path=${project.basedir}/lib/opencv/
 					</argLine>
                 </configuration>
-                <executions>
+                <!-- <executions>
                     <execution>
                         <phase>test</phase>
                     </execution>
-                </executions>
+                </executions> -->
             </plugin>
 
 		</plugins>
