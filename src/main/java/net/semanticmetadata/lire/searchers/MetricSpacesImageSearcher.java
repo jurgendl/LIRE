@@ -55,6 +55,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.util.BytesRef;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -213,7 +214,11 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
             TopDocs topDocs = searcher.search(new TermQuery(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, doc.get(DocumentBuilder.FIELD_NAME_IDENTIFIER))), 1);
             if (topDocs.totalHits.value > 0) {
                 int docID = topDocs.scoreDocs[0].doc;
-                queryFeature.setByteArrayRepresentation(docValues.get(docID).bytes, docValues.get(docID).offset, docValues.get(docID).length);
+               
+                docValues.advance(docID);
+                BytesRef bin = docValues.binaryValue();
+                queryFeature.setByteArrayRepresentation(bin.bytes, bin.offset, bin.length);
+    
                 return search(MetricSpaces.generateBoostedQuery(queryFeature, numHashesUsedForQuery), queryFeature, searcher.getIndexReader());
             }
         } else {
@@ -293,7 +298,10 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
         double maxDistance = -1d;
         double tmpScore;
         for (int i = 0; i < docs.scoreDocs.length; i++) {
-            feature.setByteArrayRepresentation(docValues.get(docs.scoreDocs[i].doc).bytes, docValues.get(docs.scoreDocs[i].doc).offset, docValues.get(docs.scoreDocs[i].doc).length);
+            docValues.advance(docs.scoreDocs[i].doc);
+            BytesRef bin = docValues.binaryValue();
+            feature.setByteArrayRepresentation(bin.bytes, bin.offset, bin.length);
+        
             tmpScore = queryFeature.getDistance(feature);
             assert (tmpScore >= 0);
             if (resultScoreDocs.size() < maximumHits) {
