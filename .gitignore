@@ -64,3 +64,6 @@ testxml.xml
 .gradle/*
 dist/*
 /target/
+/tmp-images-list-for-testing.txt
+/*.dat
+/install.bat
