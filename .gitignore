@@ -63,3 +63,4 @@ wang-index-*/*
 testxml.xml
 .gradle/*
 dist/*
+/target/
