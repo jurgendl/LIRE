@@ -126,53 +126,8 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
     @SuppressWarnings("unused")
     private static class MySimilarity extends ClassicSimilarity {
         @Override
-        public float coord(int overlap, int maxOverlap) {
-            return super.coord(overlap, maxOverlap);
-        }
-
-        @Override
-        public float queryNorm(float sumOfSquaredWeights) {
-            return super.queryNorm(sumOfSquaredWeights);
-        }
-
-        @Override
-        public float lengthNorm(FieldInvertState state) {
-            return super.lengthNorm(state);
-        }
-
-        @Override
-        public float tf(float freq) {
-            return super.tf(freq);
-        }
-
-        @Override
-        public float sloppyFreq(int distance) {
-            return super.sloppyFreq(distance);
-        }
-
-        @Override
-        public float scorePayload(int doc, int start, int end, BytesRef payload) {
-            return super.scorePayload(doc, start, end, payload);
-        }
-
-        @Override
         public float idf(long docFreq, long numDocs) {
             return 1f; //super.idf(docFreq, numDocs);
-        }
-
-        @Override
-        public void setDiscountOverlaps(boolean v) {
-            super.setDiscountOverlaps(v);
-        }
-
-        @Override
-        public boolean getDiscountOverlaps() {
-            return super.getDiscountOverlaps();
-        }
-
-        @Override
-        public String toString() {
-            return super.toString();
         }
     }
 }

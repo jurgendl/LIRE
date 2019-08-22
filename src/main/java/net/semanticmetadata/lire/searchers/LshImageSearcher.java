@@ -177,25 +177,25 @@ public class LshImageSearcher extends AbstractImageSearcher {
                 return 1;
             }
 
-            @Override
-            public float coord(int overlap, int maxOverlap) {
-                return 1;
-            }
-
-            @Override
-            public float queryNorm(float sumOfSquaredWeights) {
-                return 1;
-            }
+//            @Override
+//            public float coord(int overlap, int maxOverlap) {
+//                return 1;
+//            }
+//
+//            @Override
+//            public float queryNorm(float sumOfSquaredWeights) {
+//                return 1;
+//            }
 
             @Override
             public float sloppyFreq(int distance) {
                 return 1;
             }
 
-            @Override
-            public float lengthNorm(FieldInvertState state) {
-                return 1;
-            }
+//            @Override
+//            public float lengthNorm(FieldInvertState state) {
+//                return 1;
+//            }
         });
         BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
         for (int i = 0; i < hashes.length; i++) {
