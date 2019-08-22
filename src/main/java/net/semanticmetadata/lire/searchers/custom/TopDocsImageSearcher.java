@@ -47,7 +47,9 @@ import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
@@ -118,12 +120,12 @@ public class TopDocsImageSearcher {
         // clear result set ...
         docs.clear();
         // Needed for check whether the document is deleted.
-        Bits liveDocs = MultiFields.getLiveDocs(reader);
+      //  Bits liveDocs = MultiFields.getLiveDocs(reader);
 
-        int docs = results.totalHits;
-        for (int i = 0; i < docs; i++) {
-            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
-
+        ScoreDoc[] scoreDocs = results.scoreDocs;
+        for (int i = 0; i < scoreDocs.length; i++) {
+           // if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
+            
             Document d = reader.document(results.scoreDocs[i].doc);
             double distance = getDistance(d, globalFeature);
             assert (distance >= 0);

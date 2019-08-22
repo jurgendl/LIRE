@@ -211,7 +211,7 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
         if (useDocValues) {
             // find the id of the document in the reader, then do search ... TODO: find another way instead of calling the searcher every time.
             TopDocs topDocs = searcher.search(new TermQuery(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, doc.get(DocumentBuilder.FIELD_NAME_IDENTIFIER))), 1);
-            if (topDocs.totalHits > 0) {
+            if (topDocs.totalHits.value > 0) {
                 int docID = topDocs.scoreDocs[0].doc;
                 queryFeature.setByteArrayRepresentation(docValues.get(docID).bytes, docValues.get(docID).offset, docValues.get(docID).length);
                 return search(MetricSpaces.generateBoostedQuery(queryFeature, numHashesUsedForQuery), queryFeature, searcher.getIndexReader());

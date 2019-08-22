@@ -43,7 +43,6 @@ package net.semanticmetadata.lire.indexers;
 
 import org.apache.lucene.codecs.FilterCodec;
 import org.apache.lucene.codecs.StoredFieldsFormat;
-import org.apache.lucene.codecs.lucene62.Lucene62Codec;
 import org.apache.lucene.codecs.lucene80.Lucene80Codec;
 
 /**
