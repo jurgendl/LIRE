@@ -51,6 +51,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Bits;
+import org.apache.lucene.util.BytesRef;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -126,7 +127,9 @@ public class GenericDocValuesImageSearcher extends AbstractImageSearcher {
         for (int i = 0; i < docs; i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
-            cachedInstance.setByteArrayRepresentation(docValues.get(i).bytes, docValues.get(i).offset, docValues.get(i).length);
+            docValues.advance(i);
+            BytesRef bin = docValues.binaryValue();
+            cachedInstance.setByteArrayRepresentation(bin.bytes, bin.offset, bin.length);
 
             tmpDistance = cachedInstance.getDistance(lireFeature);
             assert (tmpDistance >= 0);
@@ -154,7 +157,11 @@ public class GenericDocValuesImageSearcher extends AbstractImageSearcher {
         SimpleImageSearchHits searchHits = null;
         LireFeature lireFeature = extractorItem.getFeatureInstance();
 //        BinaryDocValues binaryValues = MultiDocValues.getBinaryValues(reader, lireFeature.getFieldName());
-        lireFeature.setByteArrayRepresentation(docValues.get(doc).bytes, docValues.get(doc).offset, docValues.get(doc).length);
+       
+        docValues.advance(doc);
+        BytesRef bin = docValues.binaryValue();
+        lireFeature.setByteArrayRepresentation(bin.bytes, bin.offset, bin.length);
+     
         double maxDistance = findSimilar(lireFeature);
 
         if (!useSimilarityScore) {
