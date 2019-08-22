@@ -67,3 +67,5 @@ dist/*
 /tmp-images-list-for-testing.txt
 /*.dat
 /install.bat
+/lib/jar_files.zip
+/lib/opencv-2.4.9-8.jar
